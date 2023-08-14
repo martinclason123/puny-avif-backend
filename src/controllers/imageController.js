@@ -1,8 +1,7 @@
-//imageController.js
-
+const fs = require("fs");
 const imageService = require("../services/imageService");
 const zipService = require("../services/zipService");
-const path = require("path"); // ensure this is imported at the top of your file
+const path = require("path");
 
 exports.compressAndZipImages = async (req, res, next) => {
   try {
@@ -30,7 +29,13 @@ exports.compressAndZipImages = async (req, res, next) => {
     const zippedFilePath = await zipService.createZip(compressedFilePaths);
     console.log("Zip file created successfully.");
 
-    res.download(zippedFilePath);
+    const stream = fs.createReadStream(zippedFilePath);
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=${path.basename(zippedFilePath)}`
+    );
+    stream.pipe(res);
   } catch (error) {
     console.error("Error in compressAndZipImages:", error.message);
     next(error);
