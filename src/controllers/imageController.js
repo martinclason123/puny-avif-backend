@@ -1,6 +1,8 @@
+// src/controllers/imageController.js
 const fs = require("fs");
 const imageService = require("../services/imageService");
 const zipService = require("../services/zipService");
+const cleanupService = require("../services/cleanupService");
 const path = require("path");
 
 exports.compressAndZipImages = async (req, res, next) => {
@@ -17,11 +19,13 @@ exports.compressAndZipImages = async (req, res, next) => {
 
     for (let file of req.files) {
       console.log(`Compressing file: ${file.originalname}`);
-      const compressedFilePath = await imageService.compressImage(
+      const compressedFiles = await imageService.compressImage(
         file.path,
-        path.join(__dirname, "..", "compressed")
+        path.join(__dirname, "..", "compressed"),
+        file.originalname // passing the original filename
       );
-      compressedFilePaths.push(compressedFilePath);
+
+      compressedFilePaths.push(...compressedFiles); // Using spread to append multiple items
       console.log(`File ${file.originalname} compressed.`);
     }
 
@@ -36,6 +40,15 @@ exports.compressAndZipImages = async (req, res, next) => {
       `attachment; filename=${path.basename(zippedFilePath)}`
     );
     stream.pipe(res);
+
+    // Cleanup after the response is finished
+    res.on("finish", async () => {
+      console.log("Cleaning up the compressed directory...");
+      await cleanupService.cleanupService(
+        path.join(__dirname, "..", "compressed")
+      );
+      console.log("Cleanup done!");
+    });
   } catch (error) {
     console.error("Error in compressAndZipImages:", error.message);
     next(error);

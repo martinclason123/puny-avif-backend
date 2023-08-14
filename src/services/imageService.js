@@ -1,3 +1,4 @@
+// src/services/imageService.js
 const sharp = require("sharp");
 const path = require("path");
 
@@ -7,19 +8,37 @@ const COMPRESSION_LEVEL = Math.floor(QUALITY / 10);
 
 const compressImage = async (inputFilePath, outputFolderPath) => {
   const { ext, name } = path.parse(inputFilePath);
-  const outputPath = path.join(outputFolderPath, name + ext);
-
   const image = sharp(inputFilePath);
 
+  let outputPathList = [];
+
+  // Generate JPEG, WebP, and AVIF for JPEG input
   if (ext.toLowerCase() === ".jpg" || ext.toLowerCase() === ".jpeg") {
-    await image.jpeg({ quality: QUALITY }).toFile(outputPath);
-  } else if (ext.toLowerCase() === ".png") {
-    await image.png({ compressionLevel: COMPRESSION_LEVEL }).toFile(outputPath);
+    const jpegOutputPath = path.join(outputFolderPath, name + ".jpeg");
+    await image.jpeg({ quality: QUALITY }).toFile(jpegOutputPath);
+    outputPathList.push(jpegOutputPath);
   }
 
-  // Add more formats if needed
+  // Generate PNG for PNG input
+  if (ext.toLowerCase() === ".png") {
+    const pngOutputPath = path.join(outputFolderPath, name + ".png");
+    await image
+      .png({ compressionLevel: COMPRESSION_LEVEL })
+      .toFile(pngOutputPath);
+    outputPathList.push(pngOutputPath);
+  }
 
-  return outputPath; // return path of the compressed image
+  // Generate WebP for both JPEG and PNG input
+  const webpOutputPath = path.join(outputFolderPath, name + ".webp");
+  await image.clone().webp({ quality: QUALITY }).toFile(webpOutputPath);
+  outputPathList.push(webpOutputPath);
+
+  // Generate AVIF for both JPEG and PNG input
+  const avifOutputPath = path.join(outputFolderPath, name + ".avif");
+  await image.clone().avif({ quality: AVIF_QUALITY }).toFile(avifOutputPath);
+  outputPathList.push(avifOutputPath);
+
+  return outputPathList;
 };
 
 module.exports = {
