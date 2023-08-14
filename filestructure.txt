@@ -1,0 +1,22 @@
+/backend
+|-- /node_modules
+|-- /src
+|   |-- /controllers
+|   |   |-- imageController.js
+|   |-- /middlewares
+|   |   |-- uploadMiddleware.js
+|   |   |-- errorHandlerMiddleware.js
+|   |-- /services
+|   |   |-- imageService.js
+|   |   |-- zipService.js
+|   |-- /routes
+|   |   |-- imageRoutes.js
+|   |-- /utils
+|   |   |-- helpers.js
+|   |-- /config
+|   |   |-- index.js
+|   |-- index.js (your main server file)
+|-- /uploads
+|-- /compressed
+|-- package.json
+|-- .gitignore
