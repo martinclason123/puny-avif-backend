@@ -1,5 +1,4 @@
-// src/controllers/imageController.js
-const fs = require("fs");
+const fs = require("fs-extra"); // Use fs-extra for additional utility
 const imageService = require("../services/imageService");
 const zipService = require("../services/zipService");
 const cleanupService = require("../services/cleanupService");
@@ -14,6 +13,10 @@ exports.compressAndZipImages = async (req, res, next) => {
       throw new Error("No files uploaded");
     }
 
+    // Set the compressed directory to a temporary path and ensure it exists
+    const compressedDirectory = "/tmp/compressed";
+    await fs.ensureDir(compressedDirectory);
+
     console.log(`Processing ${req.files.length} files.`);
     const compressedFilePaths = [];
 
@@ -21,7 +24,7 @@ exports.compressAndZipImages = async (req, res, next) => {
       console.log(`Compressing file: ${file.originalname}`);
       const compressedFiles = await imageService.compressImage(
         file.path,
-        path.join(__dirname, "..", "compressed"),
+        compressedDirectory,
         file.originalname // passing the original filename
       );
 
@@ -44,9 +47,7 @@ exports.compressAndZipImages = async (req, res, next) => {
     // Cleanup after the response is finished
     res.on("finish", async () => {
       console.log("Cleaning up the compressed directory...");
-      await cleanupService.cleanupService(
-        path.join(__dirname, "..", "compressed")
-      );
+      await cleanupService.cleanupService(compressedDirectory);
       console.log("Cleanup done!");
     });
   } catch (error) {
