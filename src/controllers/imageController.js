@@ -22,14 +22,16 @@ exports.compressAndZipImages = async (req, res, next) => {
 
     for (let file of req.files) {
       console.log(`Compressing file: ${file.originalname}`);
+      const originalFileName = req.fileMapping[file.filename]; // Get the original filename
+
       const compressedFiles = await imageService.compressImage(
         file.path,
         compressedDirectory,
-        file.originalname // passing the original filename
+        originalFileName // Use the original file name
       );
 
       compressedFilePaths.push(...compressedFiles); // Using spread to append multiple items
-      console.log(`File ${file.originalname} compressed.`);
+      console.log(`File ${originalFileName} compressed.`);
     }
 
     console.log("Creating zip file.");

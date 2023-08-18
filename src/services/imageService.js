@@ -6,9 +6,16 @@ const QUALITY = 80;
 const AVIF_QUALITY = Math.floor(QUALITY * 0.7);
 const COMPRESSION_LEVEL = Math.floor(QUALITY / 10);
 
-const compressImage = async (inputFilePath, outputFolderPath) => {
-  const { ext, name } = path.parse(inputFilePath);
+const compressImage = async (
+  inputFilePath,
+  outputFolderPath,
+  originalFileName
+) => {
+  const { ext } = path.parse(inputFilePath);
   const image = sharp(inputFilePath);
+
+  // Use the name from originalFileName for compressed files
+  const name = path.parse(originalFileName).name;
 
   let outputPathList = [];
 

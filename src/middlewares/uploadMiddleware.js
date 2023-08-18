@@ -6,7 +6,10 @@ const storage = multer.diskStorage({
     cb(null, "./uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+    const newName = Date.now() + path.extname(file.originalname);
+    if (!req.fileMapping) req.fileMapping = {};
+    req.fileMapping[newName] = file.originalname; // store the mapping
+    cb(null, newName);
   },
 });
 
