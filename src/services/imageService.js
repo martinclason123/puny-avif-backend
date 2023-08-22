@@ -21,7 +21,7 @@ const compressImage = async (
 
   // Generate JPEG, WebP, and AVIF for JPEG input
   if (ext.toLowerCase() === ".jpg" || ext.toLowerCase() === ".jpeg") {
-    const jpegOutputPath = path.join(outputFolderPath, name + ".jpeg");
+    const jpegOutputPath = path.join(outputFolderPath, name + ".jpg");
     await image.jpeg({ quality: QUALITY }).toFile(jpegOutputPath);
     outputPathList.push(jpegOutputPath);
   }
