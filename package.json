@@ -1,6 +1,6 @@
 {
   "name": "puny-avif-backend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Back-end for an image optimization website",
   "main": "index.js",
   "scripts": {
