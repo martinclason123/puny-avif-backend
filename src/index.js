@@ -3,6 +3,7 @@
 const express = require("express");
 const cors = require("cors");
 const imageRoutes = require("./routes/imageRoutes");
+const gifRoutes = require("./routes/gifRoutes");
 const errorHandler = require("./middlewares/errorHandlerMiddleware");
 
 const app = express();
@@ -22,6 +23,8 @@ app.get("/api", (req, res) => {
 
 // Add routes
 app.use("/api/images", imageRoutes);
+
+app.use("/api/gifs", gifRoutes);
 
 // Handle 404s
 app.use((req, res, next) => {
