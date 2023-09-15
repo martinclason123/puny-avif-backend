@@ -1,6 +1,7 @@
 const fs = require("fs-extra"); // Use fs-extra for additional utility
 const path = require("path");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
+console.log("ffmpegPath:", ffmpegPath);
 const ffmpeg = require("fluent-ffmpeg");
 ffmpeg.setFfmpegPath(ffmpegPath);
 const gifService = require("../services/gifService");
