@@ -30,7 +30,7 @@ exports.compressAndZipGifs = async (req, res, next) => {
       compressedDirectory,
       gif.originalname
     );
-
+    console.log("Compressed GIF created successfully.");
     // Convert GIF to WebM
     const webmPath = await gifService.convertGifToWebM(
       gif.path,
@@ -38,6 +38,7 @@ exports.compressAndZipGifs = async (req, res, next) => {
       gif.originalname
     );
 
+    console.log("Converting GIF to MP4...");
     //Convert GIF to MP4
     const mp4Path = await gifService.convertGifToMP4(
       gif.path,
@@ -45,6 +46,7 @@ exports.compressAndZipGifs = async (req, res, next) => {
       gif.originalname
     );
 
+    console.log("GIF converted to MP4 successfully.");
     console.log("Creating zip file.");
     const zippedFilePath = await zipService.createZip([mp4Path, webmPath]);
     console.log("Zip file created successfully.");
