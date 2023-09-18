@@ -38,11 +38,15 @@ exports.compressAndZipGifs = async (req, res, next) => {
       gif.originalname
     );
 
+    //Convert GIF to MP4
+    const mp4Path = await gifService.convertGifToMP4(
+      gif.path,
+      compressedDirectory,
+      gif.originalname
+    );
+
     console.log("Creating zip file.");
-    const zippedFilePath = await zipService.createZip([
-      compressedGifPath,
-      webmPath,
-    ]);
+    const zippedFilePath = await zipService.createZip([mp4Path, webmPath]);
     console.log("Zip file created successfully.");
 
     const stream = fs.createReadStream(zippedFilePath);

@@ -48,8 +48,29 @@ const convertGifToWebM = async (
 
   return webmOutputPath;
 };
+const convertGifToMP4 = async (
+  inputFilePath,
+  outputFolderPath,
+  originalFileName
+) => {
+  const name = path.parse(originalFileName).name;
+
+  const mp4OutputPath = path.join(outputFolderPath, name + ".mp4");
+
+  await new Promise((resolve, reject) => {
+    ffmpeg(inputFilePath)
+      .toFormat("mp4")
+      .videoCodec("libx264")
+      .on("end", resolve)
+      .on("error", reject)
+      .save(mp4OutputPath);
+  });
+
+  return mp4OutputPath;
+};
 
 module.exports = {
   compressGif,
   convertGifToWebM,
+  convertGifToMP4,
 };
