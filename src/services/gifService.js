@@ -46,6 +46,7 @@ const convertGifToWebM = async (
   return webmOutputPath;
 };
 
+// This is useless and can be removed.
 // const convertGifToWebP = async (
 //   inputFilePath,
 //   outputFolderPath,
