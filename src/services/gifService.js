@@ -3,7 +3,10 @@
 const ffmpeg = require("fluent-ffmpeg");
 const { exec } = require("child_process");
 const path = require("path");
-import gifsicle from "gifsicle";
+let gifsicle;
+import("gifsicle").then((module) => {
+  gifsicle = module.default;
+});
 
 const compressGif = async (
   inputFilePath,
