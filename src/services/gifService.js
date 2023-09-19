@@ -2,6 +2,7 @@
 
 const ffmpeg = require("fluent-ffmpeg");
 const { exec } = require("child_process");
+const { execFile } = require("child_process");
 const path = require("path");
 let gifsicle;
 import("gifsicle").then((module) => {
