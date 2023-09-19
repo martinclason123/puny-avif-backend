@@ -10,7 +10,7 @@ const compressGif = (inputFilePath, outputFolderPath, originalFileName) => {
     const compressedGifOutputPath = path.join(outputFolderPath, name + ".gif");
 
     // Use gifsicle to compress the GIF
-    const command = `gifsicle --optimize=3 "${inputFilePath}" -o "${compressedGifOutputPath}"`;
+    const command = `gifsicle --optimize=3 --lossy=30 "${inputFilePath}" -o "${compressedGifOutputPath}"`;
 
     exec(command, (error) => {
       if (error) {
