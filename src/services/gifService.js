@@ -1,8 +1,8 @@
 // src/services/gifService.js
 
 const ffmpeg = require("fluent-ffmpeg");
+const { exec } = require("child_process");
 const path = require("path");
-const fs = require("fs-extra");
 
 const compressGif = async (
   inputFilePath,
@@ -46,24 +46,56 @@ const convertGifToWebM = async (
   return webmOutputPath;
 };
 
-const convertGifToWebP = async (
+// const convertGifToWebP = async (
+//   inputFilePath,
+//   outputFolderPath,
+//   originalFileName
+// ) => {
+//   const name = path.parse(originalFileName).name;
+
+//   const webpOutputPath = path.join(outputFolderPath, name + ".webp");
+
+//   await new Promise((resolve, reject) => {
+//     ffmpeg(inputFilePath)
+//       .toFormat("webp")
+//       .on("end", resolve)
+//       .on("error", reject)
+//       .save(webpOutputPath);
+//   });
+
+//   return webpOutputPath;
+// };
+
+const convertGifToWebP = (
   inputFilePath,
   outputFolderPath,
   originalFileName
 ) => {
-  const name = path.parse(originalFileName).name;
+  return new Promise((resolve, reject) => {
+    const name = path.parse(originalFileName).name;
+    const webpOutputPath = path.join(outputFolderPath, name + ".webp");
 
-  const webpOutputPath = path.join(outputFolderPath, name + ".webp");
-
-  await new Promise((resolve, reject) => {
-    ffmpeg(inputFilePath)
-      .toFormat("webp")
-      .on("end", resolve)
-      .on("error", reject)
-      .save(webpOutputPath);
+    // First, convert the GIF to WebP using cwebp
+    exec(`cwebp ${inputFilePath} -o ${webpOutputPath}`, (err) => {
+      if (err) {
+        console.error("Error converting GIF to WebP:", err);
+        reject(err);
+      } else {
+        // Then, make the WebP loop indefinitely using webpmux
+        exec(
+          `webpmux -set loop 0 ${webpOutputPath} -o ${webpOutputPath}`,
+          (err) => {
+            if (err) {
+              console.error("Error setting loop for WebP:", err);
+              reject(err);
+            } else {
+              resolve(webpOutputPath);
+            }
+          }
+        );
+      }
+    });
   });
-
-  return webpOutputPath;
 };
 
 const convertGifToMP4 = async (
