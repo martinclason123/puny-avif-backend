@@ -9,7 +9,6 @@ const zipService = require("../services/zipService");
 const cleanupService = require("../services/cleanupService");
 
 exports.compressAndZipGifs = async (req, res, next) => {
-  console.log("files: ", req.files.length);
   try {
     if (!req.files || req.files.length === 0) {
       console.log("Error: No files uploaded.");
@@ -21,42 +20,44 @@ exports.compressAndZipGifs = async (req, res, next) => {
     await fs.ensureDir(compressedDirectory);
 
     const convertedFilePaths = []; // Store all converted file paths here
-    if (req.files.length === 1) {
-      const gif = req.files[0];
-
-      const webpPath = await gifService.convertGifToWebP(
-        gif.path,
-        compressedDirectory,
-        gif.originalname
-      );
-
-      const compressedGifPath = await gifService.compressGif(
-        gif.path,
-        compressedDirectory,
-        gif.originalname
-      );
-
-      convertedFilePaths.push(webpPath, compressedGifPath);
-    } else {
+    if (req.files.length > 1) {
+      console.log("processing into webp and compressed GIF");
       for (let gif of req.files) {
-        console.log(`Compressing and converting GIF: ${gif.originalname}`);
+        console.log("files: ", req.files.length);
 
-        // Convert GIF to WebM
-        const webmPath = await gifService.convertGifToWebM(
+        const webpPath = await gifService.convertGifToWebP(
           gif.path,
           compressedDirectory,
           gif.originalname
         );
 
-        //Convert GIF to MP4
-        const mp4Path = await gifService.convertGifToMP4(
+        const compressedGifPath = await gifService.compressGif(
           gif.path,
           compressedDirectory,
           gif.originalname
         );
 
-        convertedFilePaths.push(webmPath, mp4Path);
+        convertedFilePaths.push(webpPath, compressedGifPath);
       }
+    } else {
+      let gif = req.files[0];
+      console.log(`Compressing and converting GIF: ${gif.originalname}`);
+
+      // Convert GIF to WebM
+      const webmPath = await gifService.convertGifToWebM(
+        gif.path,
+        compressedDirectory,
+        gif.originalname
+      );
+
+      //Convert GIF to MP4
+      const mp4Path = await gifService.convertGifToMP4(
+        gif.path,
+        compressedDirectory,
+        gif.originalname
+      );
+
+      convertedFilePaths.push(webmPath, mp4Path);
     }
 
     console.log("All GIFs converted successfully.");
