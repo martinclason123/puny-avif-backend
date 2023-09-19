@@ -86,17 +86,18 @@ const convertGifToWebP = (
         reject(err);
       } else {
         // Make the WebP loop indefinitely using webpmux
-        exec(
-          `webpmux -set loop 0 -o ${webpOutputPath} ${webpOutputPath}`,
-          (err) => {
-            if (err) {
-              console.error("Error setting loop for WebP:", err);
-              reject(err);
-            } else {
-              resolve(webpOutputPath);
-            }
-          }
-        );
+        resolve(webpOutputPath);
+        // exec(
+        //   `webpmux -set loop 0 -o ${webpOutputPath} ${webpOutputPath}`,
+        //   (err) => {
+        //     if (err) {
+        //       console.error("Error setting loop for WebP:", err);
+        //       reject(err);
+        //     } else {
+        //       resolve(webpOutputPath);
+        //     }
+        //   }
+        // );
       }
     });
   });
