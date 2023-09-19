@@ -3,24 +3,31 @@
 const ffmpeg = require("fluent-ffmpeg");
 const { exec } = require("child_process");
 const path = require("path");
+import gifsicle from "gifsicle";
 
-const compressGif = (inputFilePath, outputFolderPath, originalFileName) => {
-  return new Promise((resolve, reject) => {
-    const name = path.parse(originalFileName).name;
-    const compressedGifOutputPath = path.join(outputFolderPath, name + ".gif");
+const compressGif = async (
+  inputFilePath,
+  outputFolderPath,
+  originalFileName
+) => {
+  const name = path.parse(originalFileName).name;
+  const compressedGifOutputPath = path.join(outputFolderPath, name + ".gif");
 
-    // Use gifsicle to compress the GIF
-    const command = `gifsicle --optimize=3 --colors 128 --lossy=30 "${inputFilePath}" -o "${compressedGifOutputPath}"`;
-
-    exec(command, (error) => {
-      if (error) {
-        console.error(`Error compressing GIF with gifsicle: ${error}`);
-        reject(error);
-      } else {
-        resolve(compressedGifOutputPath);
+  await new Promise((resolve, reject) => {
+    execFile(
+      gifsicle,
+      ["-O3", "--lossy=30", "-o", compressedGifOutputPath, inputFilePath],
+      (error) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
       }
-    });
+    );
   });
+
+  return compressedGifOutputPath;
 };
 
 const convertGifToWebM = async (
