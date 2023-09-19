@@ -11,10 +11,7 @@ const compressGif = async (
 ) => {
   const name = path.parse(originalFileName).name;
 
-  const compressedGifOutputPath = path.join(
-    outputFolderPath,
-    name + "-compressed.gif"
-  );
+  const compressedGifOutputPath = path.join(outputFolderPath, name + ".gif");
 
   // Use FFmpeg to compress the GIF (you'll need to adjust flags for optimal compression)
   await new Promise((resolve, reject) => {
@@ -48,6 +45,27 @@ const convertGifToWebM = async (
 
   return webmOutputPath;
 };
+
+const convertGifToWebP = async (
+  inputFilePath,
+  outputFolderPath,
+  originalFileName
+) => {
+  const name = path.parse(originalFileName).name;
+
+  const webpOutputPath = path.join(outputFolderPath, name + ".webp");
+
+  await new Promise((resolve, reject) => {
+    ffmpeg(inputFilePath)
+      .toFormat("webp")
+      .on("end", resolve)
+      .on("error", reject)
+      .save(webpOutputPath);
+  });
+
+  return webpOutputPath;
+};
+
 const convertGifToMP4 = async (
   inputFilePath,
   outputFolderPath,
@@ -73,4 +91,5 @@ module.exports = {
   compressGif,
   convertGifToWebM,
   convertGifToMP4,
+  convertGifToWebP,
 };
