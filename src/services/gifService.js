@@ -80,24 +80,12 @@ const convertGifToWebP = (
     const webpOutputPath = path.join(outputFolderPath, name + ".webp");
 
     // Convert the GIF to WebP using gif2webp
-    exec(`gif2webp ${inputFilePath} -o ${webpOutputPath}`, (err) => {
+    exec(`gif2webp -lossy ${inputFilePath} -o ${webpOutputPath}`, (err) => {
       if (err) {
         console.error("Error converting GIF to WebP:", err);
         reject(err);
       } else {
-        // Make the WebP loop indefinitely using webpmux
         resolve(webpOutputPath);
-        // exec(
-        //   `webpmux -set loop 0 -o ${webpOutputPath} ${webpOutputPath}`,
-        //   (err) => {
-        //     if (err) {
-        //       console.error("Error setting loop for WebP:", err);
-        //       reject(err);
-        //     } else {
-        //       resolve(webpOutputPath);
-        //     }
-        //   }
-        // );
       }
     });
   });
