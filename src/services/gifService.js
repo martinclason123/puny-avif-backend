@@ -4,25 +4,23 @@ const ffmpeg = require("fluent-ffmpeg");
 const { exec } = require("child_process");
 const path = require("path");
 
-const compressGif = async (
-  inputFilePath,
-  outputFolderPath,
-  originalFileName
-) => {
-  const name = path.parse(originalFileName).name;
+const compressGif = (inputFilePath, outputFolderPath, originalFileName) => {
+  return new Promise((resolve, reject) => {
+    const name = path.parse(originalFileName).name;
+    const compressedGifOutputPath = path.join(outputFolderPath, name + ".gif");
 
-  const compressedGifOutputPath = path.join(outputFolderPath, name + ".gif");
+    // Use gifsicle to compress the GIF
+    const command = `gifsicle --optimize=3 "${inputFilePath}" -o "${compressedGifOutputPath}"`;
 
-  // Use FFmpeg to compress the GIF (you'll need to adjust flags for optimal compression)
-  await new Promise((resolve, reject) => {
-    ffmpeg(inputFilePath)
-      .toFormat("gif")
-      .on("end", resolve)
-      .on("error", reject)
-      .save(compressedGifOutputPath);
+    exec(command, (error) => {
+      if (error) {
+        console.error(`Error compressing GIF with gifsicle: ${error}`);
+        reject(error);
+      } else {
+        resolve(compressedGifOutputPath);
+      }
+    });
   });
-
-  return compressedGifOutputPath;
 };
 
 const convertGifToWebM = async (
