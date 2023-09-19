@@ -72,29 +72,37 @@ const convertGifToWebP = (
   originalFileName
 ) => {
   return new Promise((resolve, reject) => {
+    const absoluteInputFilePath = path.resolve(inputFilePath);
+    console.log("Absolute Input File Path:", absoluteInputFilePath);
+
     const name = path.parse(originalFileName).name;
     const webpOutputPath = path.join(outputFolderPath, name + ".webp");
-
+    const env = Object.create(process.env);
+    env.PATH = "C:\\libwebp-1.3.2-windows-x64\\bin;" + env.PATH;
     // First, convert the GIF to WebP using cwebp
-    exec(`cwebp ${inputFilePath} -o ${webpOutputPath}`, (err) => {
-      if (err) {
-        console.error("Error converting GIF to WebP:", err);
-        reject(err);
-      } else {
-        // Then, make the WebP loop indefinitely using webpmux
-        exec(
-          `webpmux -set loop 0 ${webpOutputPath} -o ${webpOutputPath}`,
-          (err) => {
-            if (err) {
-              console.error("Error setting loop for WebP:", err);
-              reject(err);
-            } else {
-              resolve(webpOutputPath);
+    exec(
+      `gif2webp ${inputFilePath} -o ${webpOutputPath}`,
+      { env: env },
+      (err) => {
+        if (err) {
+          console.error("Error converting GIF to WebP:", err);
+          reject(err);
+        } else {
+          // Then, make the WebP loop indefinitely using webpmux
+          exec(
+            `webpmux -set loop 0 ${webpOutputPath} -o ${webpOutputPath}`,
+            (err) => {
+              if (err) {
+                console.error("Error setting loop for WebP:", err);
+                reject(err);
+              } else {
+                resolve(webpOutputPath);
+              }
             }
-          }
-        );
+          );
+        }
       }
-    });
+    );
   });
 };
 
