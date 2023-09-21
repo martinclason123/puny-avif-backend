@@ -21,26 +21,25 @@ exports.compressAndZipGifs = async (req, res, next) => {
 
     const convertedFilePaths = []; // Store all converted file paths here
 
-      console.log("processing into webp and compressed GIF");
-      
-      for (let gif of req.files) {
-        console.log("files: ", req.files.length);
+      for(let gif of req.files) {
+      console.log(`Compressing and converting GIF: ${gif.originalname}`);
 
-        const webpPath = await gifService.convertGifToWebP(
-          gif.path,
-          compressedDirectory,
-          gif.originalname
-        );
+      // Convert GIF to WebM
+      const webmPath = await gifService.convertGifToWebM(
+        gif.path,
+        compressedDirectory,
+        gif.originalname
+      );
 
-        const compressedGifPath = await gifService.compressGif(
-          gif.path,
-          compressedDirectory,
-          gif.originalname
-        );
+      //Convert GIF to MP4
+      const mp4Path = await gifService.convertGifToMP4(
+        gif.path,
+        compressedDirectory,
+        gif.originalname
+      );
 
-        convertedFilePaths.push(webpPath, compressedGifPath);
+      convertedFilePaths.push(webmPath, mp4Path);
       }
-    
 
     console.log("All GIFs converted successfully.");
     console.log("Creating zip file.");

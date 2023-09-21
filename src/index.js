@@ -3,6 +3,7 @@
 const express = require("express");
 const cors = require("cors");
 const imageRoutes = require("./routes/imageRoutes");
+const videoRoutes = require("./routes/videoRoutes");
 const gifRoutes = require("./routes/gifRoutes");
 const errorHandler = require("./middlewares/errorHandlerMiddleware");
 
@@ -25,6 +26,8 @@ app.get("/api", (req, res) => {
 app.use("/api/images", imageRoutes);
 
 app.use("/api/gifs", gifRoutes);
+
+app.use("/api/videos", videoRoutes);
 
 // Handle 404s
 app.use((req, res, next) => {
