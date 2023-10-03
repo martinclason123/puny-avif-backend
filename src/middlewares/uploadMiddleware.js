@@ -30,7 +30,7 @@ const upload = multer({
   storage: storage,
 
   // Set a file size limit to prevent overly large uploads.
-  limits: { fileSize: 5000000 }, // 5MB limit
+  limits: { fileSize: 10000000 }, // 5MB limit
 
   // Filter which files are allowed to be uploaded based on file type.
   fileFilter: (req, file, cb) => {
